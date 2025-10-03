@@ -4,20 +4,20 @@ const API_URL = "http://localhost:3007/students";
 
 interface Student {
   _id: string;
-  fristName: string;
+  firstName: string;
   lastName: string;
   email: string;
   age: string;
-  currentCollge: string;
+  currentCollege: string;
 }
 
-// Fetch All students
+// Fetch All Students
 async function fetchStudents(): Promise<Student[]> {
   try {
-    const response = await axios.get(`${API_URL}/students`);
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
-    console.log("Error Fetching student: ", error);
+    console.error("Error Fetching students: ", error);
     throw new Error("Failed to fetch students");
   }
 }
@@ -25,28 +25,28 @@ async function fetchStudents(): Promise<Student[]> {
 // Delete a Student
 async function deleteStudent(id: string): Promise<void> {
   try {
-    await axios.delete(`${API_URL}/students/.${id}`);
+    await axios.delete(`${API_URL}/${id}`);
   } catch (error) {
-    console.log("Error Deleting student: ", error);
+    console.error("Error Deleting student: ", error);
     throw new Error("Failed to delete student");
   }
 }
 
-// Submit (add or update) a Student
+// Submit (Add or Update) a Student
 async function submitStudent(
   studentData: Omit<Student, "_id">,
   id?: string
 ): Promise<void> {
   try {
     if (id) {
-      await axios.put(`${API_URL}/students/${id}`, studentData);
+      // Update Student
+      await axios.put(`${API_URL}/${id}`, studentData);
     } else {
-      // Add a Student
-      const newId = Date.now().toString();
-      await axios.post(`${API_URL}/students`, { ...studentData, _id: newId });
+      // Add a new Student (let backend create _id)
+      await axios.post(API_URL, studentData);
     }
   } catch (error) {
-    console.log("Error Submitting student: ", error);
+    console.error("Error Submitting student: ", error);
     throw new Error("Failed to submit student");
   }
 }
