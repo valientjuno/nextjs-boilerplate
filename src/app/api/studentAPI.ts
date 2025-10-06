@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3007";
+const API_URL = "https://section-final-remaster-kor5.onrender.com/";
 
 interface Student {
   _id: string;
