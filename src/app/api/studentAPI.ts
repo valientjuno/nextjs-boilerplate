@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3007/students";
+const API_URL = "http://localhost:3007";
 
 interface Student {
   _id: string;
