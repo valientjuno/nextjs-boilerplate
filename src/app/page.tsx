@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import StudentForm from "./app/StudentForm";
-import { fetchStudents } from "./app/api/studentAPI";
+import StudentForm from "./StudentForm";
+import { deleteStudent, fetchStudents, submitStudent } from "./api/studentAPI";
 
 interface Student {
   _id: string;
-  fristName: string;
+  firstName: string;
   lastName: string;
   email: string;
   age: string;
-  currentCollge: string;
+  currentCollege: string;
 }
 const StudentPage = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -23,12 +23,28 @@ const StudentPage = () => {
       setStudents(data);
     } catch (error) {
       console.log("Error Fetching Students: ", error);
-      throw new Error("Failed to Delete Student");
     }
   };
   // submit student (add or update)
+  const handleSubmit = async (student: Omit<Student, "_id">, id?: string) => {
+    try {
+      await submitStudent(student, id);
+      setSelectedStudent(null);
+      await loadStudents();
+    } catch (error) {
+      console.log("Error submitting Student.", error);
+    }
+  };
 
   // delete student by id
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteStudent(id);
+      await loadStudents();
+    } catch (error) {
+      console.log("Error deleting Student", error);
+    }
+  };
 
   // inital data fetch
   useEffect(() => {
@@ -74,7 +90,7 @@ const StudentPage = () => {
                   {student._id}
                 </td>
                 <td className="px-6 py-4 txt-sm text-gray-700 whitespace-nowrap">
-                  {student.fristName}
+                  {student.firstName}
                 </td>
                 <td className="px-6 py-4 txt-sm text-gray-700 whitespace-nowrap">
                   {student.lastName}
@@ -86,21 +102,21 @@ const StudentPage = () => {
                   {student.age}
                 </td>
                 <td className="px-6 py-4 txt-sm text-gray-700 whitespace-nowrap">
-                  {student.currentCollge}
+                  {student.currentCollege}
                 </td>
                 <td className="px-6 py-4 text-sm whitespace"></td>
                 <td>
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg mr-2 text-sm"
-                    onClick={() => {}}
+                    onClick={() => setSelectedStudent(student)}
                   >
                     Update
                   </button>
                 </td>
                 <td>
                   <button
-                    className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg mr-2 text-sm"
-                    onClick={() => {}}
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg mr-2 text-sm"
+                    onClick={() => handleDelete(student._id)}
                   >
                     Delete
                   </button>
@@ -111,7 +127,7 @@ const StudentPage = () => {
         </table>
       </div>
 
-      <StudentForm />
+      <StudentForm student={selectedStudent} onsubmit={handleSubmit} />
     </div>
   );
 };
